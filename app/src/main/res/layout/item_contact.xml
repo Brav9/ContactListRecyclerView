@@ -18,14 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/ivVerticalLineNote"
-            android:layout_width="20dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:background="@color/red_line" />
 
         <TextView
             android:id="@+id/tvPhoneNumber"
@@ -36,7 +28,7 @@
             android:layout_marginBottom="8dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivVerticalLineNote"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvName"
             tools:text="+90008004004" />
 
@@ -48,7 +40,8 @@
             android:layout_marginTop="8dp"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/ivVerticalLineNote"
+            app:layout_constraintEnd_toEndOf="@+id/tvPhoneNumber"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Name" />
 
