@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Contact(
-    var id: Int,
-    var phoneNumber: Long,
-    var isSelected: Boolean,
-    var name: String?,
-    var surname: String?,
+    val id: Int,
+    val phoneNumber: Long,
+    val isSelected: Boolean,
+    val name: String?,
+    val surname: String?,
 ) : Parcelable

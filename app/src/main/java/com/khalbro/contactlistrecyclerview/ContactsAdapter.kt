@@ -1,40 +1,30 @@
 package com.khalbro.contactlistrecyclerview
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 
 class ContactsAdapter(
-    private val contactList: ArrayList<Contact>,
-    private val listener: ContactsFragment
-) :
-    ListAdapter<Contact, ContactsViewHolder>(ContactDiffCallBack()) {
-
-    interface OnClickListener {
-        fun onItemClick(contact: Contact)
-        fun onLongItemClick(contact: Contact)
-    }
+    private val listener: (Contact) -> Unit
+) : ListAdapter<Contact, ContactsViewHolder>(ContactDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
-        return ContactsViewHolder.from(parent)
+        return ContactsViewHolder.from(parent).apply {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != NO_POSITION) {
+                    val contact: Contact = getItem(position)
+                    listener(contact)
+                }
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
-        val contacts = contactList[position]
-        holder.bind(contacts, listener)
-//        holder.itemView.setOnClickListener { v ->
-//            if (v != null) {
-//                Navigation.findNavController(v)
-//                    .navigate(R.id.action_contactsFragment_to_editContactFragment)
-//
-//            }
-//        }
-
-    }
-
-    override fun getItemCount(): Int {
-        return contactList.size
+        getItem(position)?.let { contact ->
+            holder.bind(contact)
+        }
     }
 }
 
@@ -46,5 +36,4 @@ class ContactDiffCallBack : DiffUtil.ItemCallback<Contact>() {
     override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
         return oldItem == newItem
     }
-
 }
