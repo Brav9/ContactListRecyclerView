@@ -9,5 +9,5 @@ data class Contact(
     val phoneNumber: Long,
     val isSelected: Boolean,
     val name: String?,
-    val surname: String?,
+    val surname: String?
 ) : Parcelable

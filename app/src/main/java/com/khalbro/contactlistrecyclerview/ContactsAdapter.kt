@@ -1,5 +1,6 @@
 package com.khalbro.contactlistrecyclerview
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -8,22 +9,25 @@ import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 class ContactsAdapter(
     private val listener: (Contact) -> Unit
 ) : ListAdapter<Contact, ContactsViewHolder>(ContactDiffCallBack()) {
+    var selectEnabled = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
         return ContactsViewHolder.from(parent).apply {
             binding.root.setOnClickListener {
                 val position = bindingAdapterPosition
+
                 if (position != NO_POSITION) {
                     val contact: Contact = getItem(position)
                     listener(contact)
                 }
             }
+            //TODO binding.root.setOnLongClickListener
         }
     }
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
         getItem(position)?.let { contact ->
-            holder.bind(contact)
+            holder.bind(contact, selectEnabled)
         }
     }
 }

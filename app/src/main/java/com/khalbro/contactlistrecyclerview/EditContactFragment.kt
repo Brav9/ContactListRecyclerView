@@ -41,6 +41,7 @@ class EditContactFragment : Fragment() {
                         isSelected = false,
                         phoneNumber = binding.etPhoneNumberContact.text.toString().toLong()
                     )
+
                 )
             } else {
                 contactsStorage.addContact(
