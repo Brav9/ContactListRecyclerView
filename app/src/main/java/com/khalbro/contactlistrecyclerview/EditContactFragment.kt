@@ -25,32 +25,35 @@ class EditContactFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentEditContactBinding.bind(view)
         fragmentEditContactBinding = binding
-        val contact = args.argContact
-        binding.etIdContact.setText(contact?.id.toString())
-        binding.etNameContact.setText(contact?.name.toString())
-        binding.etSurnameContact.setText(contact?.surname.toString())
-        binding.etPhoneNumberContact.setText(contact?.phoneNumber.toString())
+        val contact = args.argContact ?: Contact(
+            id = -1,
+            name = "",
+            surname = "",
+            isSelected = false,
+            phoneNumber = ""
+        )
+
+        binding.etNameContact.setText(contact.name)
+        binding.etSurnameContact.setText(contact.surname)
+        binding.etPhoneNumberContact.setText(contact.phoneNumber)
 
         binding.btnSave.setOnClickListener {
-            if (contact != null) {
+            if (contact.id != -1) {
                 contactsStorage.updateContact(
-                    Contact(
-                        id = binding.etIdContact.text.toString().toInt(),
+                    contact.copy(
                         name = binding.etNameContact.text.toString(),
                         surname = binding.etSurnameContact.text.toString(),
                         isSelected = false,
-                        phoneNumber = binding.etPhoneNumberContact.text.toString().toLong()
+                        phoneNumber = binding.etPhoneNumberContact.text.toString()
                     )
-
                 )
             } else {
                 contactsStorage.addContact(
-                    Contact(
-                        id = binding.etIdContact.text.toString().toInt(),
+                    contact.copy(
                         name = binding.etNameContact.text.toString(),
                         surname = binding.etSurnameContact.text.toString(),
                         isSelected = false,
-                        phoneNumber = binding.etPhoneNumberContact.text.toString().toLong()
+                        phoneNumber = binding.etPhoneNumberContact.text.toString()
                     )
                 )
             }

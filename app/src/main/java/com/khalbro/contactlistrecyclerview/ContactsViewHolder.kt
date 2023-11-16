@@ -13,11 +13,12 @@ class ContactsViewHolder(val binding: ItemContactBinding) :
         selectEnabled: Boolean
     ) {
         binding.tvId.text = item.id.toString()
-        binding.tvName.text = item.name.toString()
+        binding.tvName.text = item.name
         binding.etSurnameContact.text = item.surname
-        binding.tvPhoneNumber.text = item.phoneNumber.toString()
+        binding.tvPhoneNumber.text = item.phoneNumber
         if (selectEnabled) {
             binding.checkBox.visibility = View.VISIBLE
+            binding.checkBox.isChecked = item.isSelected
         } else binding.checkBox.visibility = View.GONE
     }
 

@@ -7,8 +7,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -23,9 +21,22 @@ class ContactsFragment : Fragment() {
 
     private var _binding: FragmentContactsBinding? = null
     private val binding get() = _binding!!
-    private val contacts = ContactsStorage
-    private var menu: Menu? = null
-    private var contactAdapter: ContactsAdapter? = null
+    private val contactsStorage = ContactsStorage
+    private val contactAdapter: ContactsAdapter by lazy {
+        ContactsAdapter(
+            listener = { contact ->
+                contact.let {
+                    if (contactAdapter.selectEnabled) {
+                        contactsStorage.changeSelectState(it)
+
+                    } else {
+                        val action = ContactsFragmentDirections
+                            .actionContactsFragmentToEditContactFragment(contact)
+                        findNavController().navigate(action)
+                    }
+                }
+            })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,16 +50,7 @@ class ContactsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView: RecyclerView = binding.rvContactsFragment
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-        contactAdapter = ContactsAdapter(
-            listener = { contact ->
-                contact.let {
-                    val action = ContactsFragmentDirections
-                        .actionContactsFragmentToEditContactFragment(contact)
-                    findNavController().navigate(action)
-                }
-            },
-            //TODO onLongClickListener = { }
-        )
+
         recyclerView.adapter = contactAdapter
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
@@ -69,31 +71,46 @@ class ContactsFragment : Fragment() {
                 .navigate(R.id.action_contactsFragment_to_editContactFragment)
         }
 
-        binding.btnCancel.setOnClickListener{
-            contactAdapter!!.apply {
+        binding.btnCancel.setOnClickListener {
+            contactsStorage.resetSelectState()
+            contactAdapter.apply {
                 selectEnabled = false
                 notifyDataSetChanged()
             }
             _binding!!.apply {
                 btnCancel.visibility = View.GONE
-                btnDelete.visibility =View.GONE
+                btnDelete.visibility = View.GONE
                 fabNewNote.visibility = View.VISIBLE
             }
         }
+
+        binding.btnDelete.setOnClickListener {
+            contactsStorage.deleteContacts()
+            contactAdapter.apply {
+                selectEnabled = false
+                notifyDataSetChanged()
+            }
+            _binding!!.apply {
+                btnCancel.visibility = View.GONE
+                btnDelete.visibility = View.GONE
+                fabNewNote.visibility = View.VISIBLE
+            }
+        }
+
         /** Подписываемся на хранилище контактов */
-        contacts.currentContactLiveData.observe(viewLifecycleOwner) { contactList ->
-            contactAdapter?.submitList(contactList)
+        contactsStorage.currentContactLiveData.observe(viewLifecycleOwner) { contactList ->
+            contactAdapter.submitList(contactList)
         }
     }
 
     fun selectEnable() {
-        contactAdapter!!.apply {
+        contactAdapter.apply {
             selectEnabled = true
             notifyDataSetChanged()
         }
         _binding!!.apply {
             btnCancel.visibility = View.VISIBLE
-            btnDelete.visibility =View.VISIBLE
+            btnDelete.visibility = View.VISIBLE
             fabNewNote.visibility = View.GONE
         }
     }
